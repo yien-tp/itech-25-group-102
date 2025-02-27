@@ -1,0 +1,17 @@
+{% extends 'trails_web/base.html' %}
+
+{% block title %}Add Review for {{ trail.title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-3">Add a Review for {{ trail.title }}</h2>
+    
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Submit Review</button>
+    </form>
+
+    <a href="{% url 'trails_web:trail_detail' trail.id %}" class="btn btn-secondary mt-3">Back to Trail</a>
+</div>
+{% endblock %}

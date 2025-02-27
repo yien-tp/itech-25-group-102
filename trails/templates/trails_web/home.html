@@ -1,0 +1,21 @@
+{% extends 'trails_web/base.html' %}
+
+{% block title %}Home - Trails Web{% endblock %}
+
+{% block content %}
+<h2 class="text-center">Welcome to Trails Web</h2>
+<p class="text-center">Explore amazing trails around the world!</p>
+
+<div class="row">
+    {% for category in categories %}
+    <div class="col-md-4">
+        <div class="card my-2">
+            <div class="card-body text-center">
+                <h5 class="card-title">{{ category.name }}</h5>
+                <a href="{% url 'trails_web:category_trails' category.slug %}" class="btn btn-primary">View Trails</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

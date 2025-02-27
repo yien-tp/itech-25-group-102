@@ -1,0 +1,126 @@
+{% extends 'trails_web/base.html' %}
+
+{% block title %}{{ trail.title }} - Trail Details{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Trail Name Header -->
+    <h2 class="text-center border p-2">{{ trail.title }}</h2>
+
+    <div class="row">
+        <!-- Trail Image -->
+        <div class="col-md-6">
+            {% if trail.image %}
+                <!-- <img src="{{ trail.image.url }}" class="img-fluid rounded" alt="{{ trail.title }}"> -->
+                <a href="{{ trail.image.url }}" data-lightbox="image-1" data-title="My caption">
+                    <img src="{{ trail.image.url }}" class="img-fluid rounded" alt="{{ trail.title }}">
+                </a>
+            {% else %}
+                <!-- <img src="https://placehold.co/500x300" class="img-fluid rounded" alt="Placeholder Image"> -->
+                <a href="https://placehold.co/500x300" data-lightbox="image-1" data-title="My caption">
+                    <img src="https://placehold.co/500x300" class="img-fluid rounded" alt="Placeholder Image">
+                </a>
+            {% endif %}
+        </div>
+
+        <!-- Trail Details -->
+        <div class="col-md-6">
+            <div class="card p-3">
+                <h5>Trail Name: {{ trail.title }}</h5>
+                <p><strong>Length:</strong> {{ trail.length }} km</p>
+                <p><strong>Estimate Time:</strong> {{ trail.estimate_time }} minutes</p>
+                <p><strong>Level:</strong> {{ trail.level }}</p>
+                <p><strong>Elevation Gain:</strong> {{ trail.elevation_gain }} m</p>
+                <p><strong>Address:</strong> {{ trail.address }}</p>
+
+                <!-- Like Button -->
+                <div class="d-flex justify-content-between align-items-center">
+                    <span><strong>Likes:</strong> <span id="like-count">{{ trail.liked_by.count }}</span></span>
+                    {% if user.is_authenticated %}
+                        <button id="like-button" class="btn btn-outline-danger">
+                            ❤️ Like
+                        </button>
+                    {% else %}
+                        <a href="{% url 'auth_login' %}" class="btn btn-outline-primary">Login to Like</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Embedded Map Placeholder -->
+    <div class="mt-4">
+        <h3>Trail Location</h3>
+        <div id="map-placeholder" class="border rounded bg-light text-center p-5">
+            <p>Google Maps API will be embedded here</p>
+        </div>
+    </div>
+
+    <!-- Review Section -->
+    <div class="mt-5">
+        <h3>Reviews</h3>
+        {% for review in reviews %}
+        <div class="card my-3 p-3">
+            <div class="d-flex align-items-center">
+                <!-- User Profile Image -->
+                <div class="me-3">
+                    {% if review.user.personal_image %}
+                    <a href="{{ review.user.personal_image.url }}" data-lightbox="image-1" data-title="My caption">
+                        <img src="{{ review.user.personal_image.url }}" class="rounded-circle" width="50" height="50" alt="{{ review.user.user.username }}">
+                    </a>
+                    {% else %}
+                    <a href="https://placehold.co/50" data-lightbox="image-1" data-title="My caption">
+                        <img src="https://placehold.co/50" class="rounded-circle" alt="User">
+                    </a>
+                    {% endif %}
+                </div>
+                
+                <!-- Review Content -->
+                <div class="flex-grow-1">
+                    <h5 class="mb-1">{{ review.user.user.username }}</h5>
+                    <p class="mb-1">{{ review.comment }}</p>
+
+                    <!-- Review Images -->
+                    {% if review.pictures %}
+                        <a href="{{ review.pictures.url }}" data-lightbox="image-1" data-title="My caption">
+                            <img src="{{ review.pictures.url }}" class="rounded me-2" width="80">
+                        </a>
+                    {% endif %}
+                </div>
+
+                <!-- Like Review Button -->
+                <div>
+                    <button class="btn btn-outline-danger">❤️ Like ({{ review.likes }})</button>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p>No reviews yet. Be the first to review!</p>
+        {% endfor %}
+    </div>
+
+    <!-- Add Review Form -->
+    {% if user.is_authenticated %}
+        <div class="mt-4">
+            <a href="{% url 'trails_web:add_review' trail.id %}" class="btn btn-primary">Add a Review</a>
+        </div>
+    {% else %}
+        <p><a href="{% url 'auth_login' %}">Login</a> to add a review.</p>
+    {% endif %}
+</div>
+
+<script>
+document.getElementById("like-button").addEventListener("click", function() {
+    fetch("{% url 'trails_web:like_trail' trail.id %}", {
+        method: "POST",
+        headers: { "X-CSRFToken": "{{ csrf_token }}" }
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById("like-count").textContent = data.total_likes;
+        document.getElementById("like-button").textContent = data.liked ? "❤️ Unlike" : "❤️ Like";
+    });
+});
+</script>
+
+{% endblock %}
