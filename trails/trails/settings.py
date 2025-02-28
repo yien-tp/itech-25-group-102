@@ -85,7 +85,7 @@ WSGI_APPLICATION = "trails.wsgi.application"
 # CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 
-CSRF_TRUSTED_ORIGINS = ['https://django-trails-grcrc4cmang9etg0.ukwest-01.azurewebsites']
+CSRF_TRUSTED_ORIGINS = ['https://django-trails-grcrc4cmang9etg0.ukwest-01.azurewebsites.net']
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
