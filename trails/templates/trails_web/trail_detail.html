@@ -36,9 +36,10 @@
                 <!-- Like Button -->
                 <div class="d-flex justify-content-between align-items-center">
                     <span><strong>Likes:</strong> <span id="like-count">{{ trail.liked_by.count }}</span></span>
+
                     {% if user.is_authenticated %}
-                        <button id="like-button" class="btn btn-outline-danger">
-                            ❤️ Like
+                        <button id="like-button" class="btn btn-outline-danger" data-liked="{{ user_has_liked|yesno:'true,false' }}">
+                            {% if user_has_liked %} ❤️ Unlike {% else %} ❤️ Like {% endif %}
                         </button>
                     {% else %}
                         <a href="{% url 'auth_login' %}" class="btn btn-outline-primary">Login to Like</a>
@@ -65,11 +66,11 @@
                 <!-- User Profile Image -->
                 <div class="me-3">
                     {% if review.user.personal_image %}
-                    <a href="{{ review.user.personal_image.url }}" data-lightbox="image-1" data-title="My caption">
+                    <a href="{{ review.user.personal_image.url }}" data-lightbox="{{ review.user.user.username }}" data-title="{{ review.user.user.username }}'s Profile Image">
                         <img src="{{ review.user.personal_image.url }}" class="rounded-circle" width="50" height="50" alt="{{ review.user.user.username }}">
                     </a>
                     {% else %}
-                    <a href="https://placehold.co/50" data-lightbox="image-1" data-title="My caption">
+                    <a href="https://placehold.co/50" data-lightbox="{{ review.user.user.username }} Placeholder" data-title="{{ review.user.user.username }}'s Profile Image">
                         <img src="https://placehold.co/50" class="rounded-circle" alt="User">
                     </a>
                     {% endif %}
@@ -77,12 +78,16 @@
                 
                 <!-- Review Content -->
                 <div class="flex-grow-1">
-                    <h5 class="mb-1">{{ review.user.user.username }}</h5>
+                    <h5 class="mb-1">
+                        <a href="{% url 'trails_web:user_profile' review.user.user.username %}">
+                            {{ review.user.user.username }}
+                        </a>
+                    </h5>
                     <p class="mb-1">{{ review.comment }}</p>
 
                     <!-- Review Images -->
                     {% if review.pictures %}
-                        <a href="{{ review.pictures.url }}" data-lightbox="image-1" data-title="My caption">
+                        <a href="{{ review.pictures.url }}" data-lightbox="image-1" data-title="Review Image">
                             <img src="{{ review.pictures.url }}" class="rounded me-2" width="80">
                         </a>
                     {% endif %}
@@ -109,18 +114,36 @@
     {% endif %}
 </div>
 
+
 <script>
-document.getElementById("like-button").addEventListener("click", function() {
-    fetch("{% url 'trails_web:like_trail' trail.id %}", {
-        method: "POST",
-        headers: { "X-CSRFToken": "{{ csrf_token }}" }
-    })
-    .then(response => response.json())
-    .then(data => {
-        document.getElementById("like-count").textContent = data.total_likes;
-        document.getElementById("like-button").textContent = data.liked ? "❤️ Unlike" : "❤️ Like";
+    document.addEventListener("DOMContentLoaded", function () {
+        const likeButton = document.getElementById("like-button");
+        if (!likeButton) return;
+    
+        const likeCountElement = document.getElementById("like-count");
+        let isLiked = likeButton.getAttribute("data-liked") === "true"; // Get initial state
+    
+        function updateButtonDisplay() {
+            likeButton.textContent = isLiked ? "❤️ Unlike" : "❤️ Like";
+            likeButton.setAttribute("data-liked", isLiked.toString());
+        }
+    
+        likeButton.addEventListener("click", function () {
+            fetch("{% url 'trails_web:like_trail' trail.id %}", {
+                method: "POST",
+                headers: { "X-CSRFToken": "{{ csrf_token }}" }
+            })
+            .then(response => response.json())
+            .then(data => {
+                likeCountElement.textContent = data.total_likes;
+                isLiked = data.liked; // Update the liked state
+                updateButtonDisplay();
+            });
+        });
+    
+        // Ensure correct button text on page load
+        updateButtonDisplay();
     });
-});
 </script>
 
 {% endblock %}
