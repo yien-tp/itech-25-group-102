@@ -22,6 +22,9 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="{% url 'trails_web:home' %}">Home</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'trails_web:category_list' %}">Categories</a>
+                    </li>
                     {% if user.is_authenticated %}
                         <li class="nav-item"><a class="nav-link" href="{% url 'trails_web:user_profile' user.username %}">Profile</a></li>
                         <li class="nav-item">
@@ -58,7 +61,7 @@
     </script>
 
     <footer class="text-center mt-5 py-3 bg-light">
-        <p>&copy; 2025 Trails Web. All rights reserved.</p>
+        <p>&copy; 2025 Trails Web. No rights reserved.</p>
     </footer>
 
     <!-- Bootstrap JavaScript -->

@@ -1,0 +1,52 @@
+{% extends 'trails_web/base.html' %}
+
+{% block title %}
+    Update Favorite Trails
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-3">Update Favorite Trails</h2>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <!-- Loop over each category -->
+        {% for category in categories %}
+            <h4>{{ category.name }}</h4>
+            <!-- Use Bootstrap row-cols-auto & g-1 to reduce spacing -->
+            <div class="row row-cols-auto g-1">
+                {% for trail in category.trails.all %}
+                    <div class="col">
+                        <!-- Card with minimal spacing -->
+                        <div class="card" style="width: 200px; height: 250px;">
+                            <img src="{{ MEDIA_URL }}trail_images/{{ trail.id }}.png"
+                                 class="card-img-top"
+                                 style="height: 120px; object-fit: cover;"
+                                 alt="{{ trail.title }}">
+                            <div class="card-body text-center" style="padding: 0.5rem;">
+                                <h6 class="card-title">{{ trail.title }}</h6>
+                                <input
+                                    type="checkbox"
+                                    name="favorite_trails"
+                                    value="{{ trail.id }}"
+                                    {% if trail in profile.favorite_trails.all %}
+                                        checked
+                                    {% endif %}
+                                >
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <hr>
+        {% endfor %}
+
+        <button type="submit" class="btn btn-success mt-3">Save Favorite Trails</button>
+    </form>
+
+    <a href="{% url 'trails_web:user_profile' profile.user.username %}" class="btn btn-secondary mt-3">
+        Back to Profile
+    </a>
+</div>
+{% endblock %}

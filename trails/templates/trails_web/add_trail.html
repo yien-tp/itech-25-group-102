@@ -1,0 +1,82 @@
+{% extends 'trails_web/base.html' %}
+
+{% block title %}Add a New Trail{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Add a New Trail to {{ category.name }}</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            {{ form.title.label_tag }}<br>
+            {{ form.title }}  <!-- Title -->
+        </div>
+        <div class="mb-3">
+            {{ form.length.label_tag }} (km)<br>
+            {{ form.length }}  <!-- Length -->
+        </div>
+        <div class="mb-3">
+            {{ form.estimate_time.label_tag }} (hours)<br>
+            {{ form.estimate_time }}  <!-- Estimate time -->
+        </div>
+        <div class="mb-3">
+            {{ form.level.label_tag }}<br>
+            {{ form.level }}  <!-- Level dropdown -->
+        </div>
+        <div class="mb-3">
+            {{ form.elevation_gain.label_tag }} (m)<br>
+            {{ form.elevation_gain }}  <!-- Elevation gain -->
+        </div>
+        <div class="mb-3">
+            {{ form.latitude.label_tag }}<br>
+            {{ form.latitude }}  <!-- Latitude -->
+        </div>
+        <div class="mb-3">
+            {{ form.longitude.label_tag }}<br>
+            {{ form.longitude }}  <!-- Longitude -->
+        </div>
+        <button type="submit" class="btn btn-primary">Create Trail</button>
+    </form>
+
+    <!-- Embedded Google Map -->
+    <div class="mt-4">
+        <h3>Preview on Map</h3>
+        <div style="width: 100%">
+            <iframe
+                id="map-frame"
+                width="100%"
+                height="600"
+                frameborder="0"
+                scrolling="no"
+                marginheight="0"
+                marginwidth="0"
+                src="https://maps.google.com/maps?width=100%25&height=600&hl=en&q=55.872058,-4.291937(My%20Location)&t=&z=14&ie=UTF8&iwloc=B&output=embed"
+            ></iframe>
+        </div>
+    </div>
+
+    <script>
+    // Update map when lat/long changes
+    const latInput = document.getElementById("id_latitude");
+    const lngInput = document.getElementById("id_longitude");
+    const mapFrame = document.getElementById("map-frame");
+
+    function updateMap() {
+        const lat = latInput.value || "55.872058";
+        const lng = lngInput.value || "-4.291937";
+        const baseUrl = "https://maps.google.com/maps?width=100%25&height=600&hl=en&q=";
+        // Construct new src with lat,lng
+        const newSrc = baseUrl + lat + "," + lng + "(Location)&t=&z=14&ie=UTF8&iwloc=B&output=embed";
+        mapFrame.src = newSrc;
+    }
+
+    // Listen for input changes
+    latInput.addEventListener("input", updateMap);
+    lngInput.addEventListener("input", updateMap);
+    </script>
+
+    <a href="{% url 'trails_web:category_trails' category.slug %}" class="btn btn-secondary mt-3">
+        Back to {{ category.name }} Trails
+    </a>
+</div>
+{% endblock %}

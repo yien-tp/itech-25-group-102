@@ -14,7 +14,7 @@ class TrailAdmin(admin.ModelAdmin):
 
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'favorite_trail')
+    list_display = ('user', )
     search_fields = ('user__username',)
 
 @admin.register(Review)

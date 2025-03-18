@@ -1,0 +1,47 @@
+{% extends 'trails_web/base.html' %}
+
+{% block title %}All Categories{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">All Categories</h2>
+    <div class="row row-cols-1 row-cols-md-3 g-3">
+        {% for category in categories %}
+            <div class="col">
+                <div class="card" style="width: 22rem; height: 250px;">
+                    {% comment %}
+                        Grab the first trail in this category, if it exists,
+                        to display its image as a "preview".
+                    {% endcomment %}
+                    {% if category.trails.exists %}
+                        {% with first_trail=category.trails.first %}
+                            <img
+                                src="{{ MEDIA_URL }}trail_images/{{ first_trail.id }}.png"
+                                class="card-img-top"
+                                style="height: 200px; object-fit: cover;"
+                                alt="{{ first_trail.title }}"
+                            >
+                        {% endwith %}
+                    {% else %}
+                        <img
+                            src="https://placehold.co/300x150" 
+                            class="card-img-top"
+                            style="height: 200px; object-fit: cover;"
+                            alt="No trails yet"
+                        >
+                    {% endif %}
+                    <div class="card-body text-center">
+                        <h5 class="card-title">
+                            <a href="{% url 'trails_web:category_trails' category.slug %}">
+                                {{ category.name }}
+                            </a>
+                        </h5>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p>No categories found.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

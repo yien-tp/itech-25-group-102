@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg
+    width="300"
+    height="100"
+    viewBox="0 0 300 100"
+    version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+>
+  <!-- Mountain Shape -->
+  <path
+    d="M 0 80 L 60 20 L 100 60 L 140 40 L 200 80 L 300 80 L 300 100 L 0 100 Z"
+    fill="#4CAF50"
+  />
+
+  <!-- Text: Trails! -->
+  <text
+    x="50%"
+    y="70%"
+    text-anchor="middle"
+    font-family="Verdana, sans-serif"
+    font-size="32"
+    fill="#000000"
+    font-weight="bold"
+    style="text-shadow: 2px 2px 4px rgba(0,0,0,0.4);"
+  >
+    Trails!
+  </text>
+</svg>

@@ -1,27 +1,56 @@
 {% extends 'trails_web/base.html' %}
+{% load static %}  <!-- Load the static files -->
 
 {% block title_block %}
     Login
 {% endblock %}
 
 {% block content %}
-<div class="jumbotron p-4">
-    <div class="container">
-        <h1 class ="jumbotron-heading">Login</h1>
+<style>
+    body {
+        background: url("{% static 'images/login-background.jpg' %}") no-repeat center center fixed;
+        background-size: cover;
+    }
+
+    .login-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    .login-box {
+        background: rgba(255, 255, 255, 0.8);
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+        width: 100%;
+        max-width: 400px;
+        text-align: center;
+    }
+
+    .login-box h1 {
+        margin-bottom: 20px;
+    }
+
+    .form-control {
+        margin-bottom: 15px;
+    }
+</style>
+
+<div class="login-container">
+    <div class="login-box">
+        <h1>Login</h1>
+        <form class="form-signin" role="form" method="post" action=".">
+            {% csrf_token %}
+            <label for="id_username" class="sr-only">Username</label>
+            <input type="text" name="username" id="id_username" class="form-control" placeholder="Username" required autofocus>
+
+            <label for="id_password" class="sr-only">Password</label>
+            <input type="password" name="password" id="id_password" class="form-control" placeholder="Password" required>
+
+            <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+        </form>
     </div>
-</div>
-
-<link href="https://getbootstrap.com/docs/4.0/examples/signin/signin.css" rel="stylesheet">
-<div class="container">
-    <form class="form-signin" role="form" method="post" action=".">
-        {% csrf_token %}
-        <label for="inputUsername" class="sr-only">Username</label>
-        <input type="text" name="username" id="id_username" class="form-control" placeholder="Username" required autofocus>
-
-        <label for="inputPassword" class="sr-only">Password</label>
-        <input type="password" name="password" id="id_password" class="form-control" placeholder="Password" required>
-        
-        <button class="btn btn-lg btn-primary btn-block" type="submit" value="Submit">Sign in</button>
-    </form>
 </div>
 {% endblock %}

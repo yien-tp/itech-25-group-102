@@ -10,16 +10,12 @@
     <div class="row">
         <!-- Trail Image -->
         <div class="col-md-6">
-            {% if trail.image %}
-                <!-- <img src="{{ trail.image.url }}" class="img-fluid rounded" alt="{{ trail.title }}"> -->
-                <a href="{{ trail.image.url }}" data-lightbox="image-1" data-title="My caption">
-                    <img src="{{ trail.image.url }}" class="img-fluid rounded" alt="{{ trail.title }}">
+            {% if trail %}
+                <a href="{{ MEDIA_URL }}trail_images/{{ trail.id }}.png" data-lightbox="image-1" data-title="{{ trail.title }}">
+                    <img src="{{ MEDIA_URL }}trail_images/{{ trail.id }}.png" class="img-fluid rounded" alt="{{ trail.title }}">
                 </a>
             {% else %}
-                <!-- <img src="https://placehold.co/500x300" class="img-fluid rounded" alt="Placeholder Image"> -->
-                <a href="https://placehold.co/500x300" data-lightbox="image-1" data-title="My caption">
-                    <img src="https://placehold.co/500x300" class="img-fluid rounded" alt="Placeholder Image">
-                </a>
+                <img src="https://placehold.co/500x300" class="img-fluid rounded" alt="Placeholder Image">
             {% endif %}
         </div>
 
@@ -31,7 +27,6 @@
                 <p><strong>Estimate Time:</strong> {{ trail.estimate_time }} minutes</p>
                 <p><strong>Level:</strong> {{ trail.level }}</p>
                 <p><strong>Elevation Gain:</strong> {{ trail.elevation_gain }} m</p>
-                <p><strong>Address:</strong> {{ trail.address }}</p>
 
                 <!-- Like Button -->
                 <div class="d-flex justify-content-between align-items-center">
