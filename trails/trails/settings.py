@@ -48,7 +48,7 @@ MEDIA_URL = f"https://{AZURE_ACCOUNT_NAME}.blob.core.windows.net/{AZURE_CONTAINE
 SECRET_KEY = os.environ["SECRET_KEY"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.environ["DEBUG"]
 
 ALLOWED_HOSTS = ['0.0.0.0', '127.0.0.1', 'localhost', 'django-trails-grcrc4cmang9etg0.ukwest-01.azurewebsites.net']
 
