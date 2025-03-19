@@ -4,6 +4,7 @@
 
 name: Build and deploy Python app to Azure Web App - django-trails
 
+
 on:
   push:
     branches:
@@ -34,6 +35,10 @@ jobs:
         
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
       - name: Run Tests
+        env:
+          ACCESS_KEY: ${{ secrets.ACCESS_KEY }}
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          CONNECTION_STRING: ${{ secrets.CONNECTION_STRING }}
         run: |
           cd trails
           python manage.py test
