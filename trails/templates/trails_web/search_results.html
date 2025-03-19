@@ -1,0 +1,38 @@
+{% extends 'trails_web/base.html' %}
+
+{% block title %}
+    Search Results
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Search Results for "{{ query }}"</h2>
+
+    <h3>Trails</h3>
+    {% if trail_results %}
+        <ul class="list-group mb-3">
+        {% for trail in trail_results %}
+            <li class="list-group-item">
+                <a href="{% url 'trails_web:trail_detail' trail.id %}">{{ trail.title }}</a>
+                <p class="mb-0"><small>{{ trail.address }} - {{ trail.level }}</small></p>
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No trails found.</p>
+    {% endif %}
+
+    <h3>Categories</h3>
+    {% if category_results %}
+        <ul class="list-group mb-3">
+        {% for cat in category_results %}
+            <li class="list-group-item">
+                <a href="{% url 'trails_web:category_trails' cat.slug %}">{{ cat.name }}</a>
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No categories found.</p>
+    {% endif %}
+</div>
+{% endblock %}

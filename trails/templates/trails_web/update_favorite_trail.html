@@ -19,11 +19,22 @@
                 {% for trail in category.trails.all %}
                     <div class="col">
                         <!-- Card with minimal spacing -->
-                        <div class="card" style="width: 200px; height: 250px;">
-                            <img src="{{ MEDIA_URL }}trail_images/{{ trail.id }}.png"
-                                 class="card-img-top"
-                                 style="height: 120px; object-fit: cover;"
-                                 alt="{{ trail.title }}">
+                        <div class="card" style="width: 200px; height: 250px; overflow: hidden;">
+                            {% if trail.image %}
+                                <img
+                                    src="{{ trail.image.url }}"
+                                    class="card-img-top"
+                                    style="height: 120px; object-fit: cover;"
+                                    alt="{{ trail.title }}"
+                                >
+                            {% else %}
+                                <img
+                                    src="https://placehold.co/300x120"
+                                    class="card-img-top"
+                                    style="height: 120px; object-fit: cover;"
+                                    alt="No Image"
+                                >
+                            {% endif %}
                             <div class="card-body text-center" style="padding: 0.5rem;">
                                 <h6 class="card-title">{{ trail.title }}</h6>
                                 <input

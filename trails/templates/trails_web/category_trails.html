@@ -29,7 +29,12 @@
     {% for trail in trails %}
     <div class="col-md-4 mb-4">
         <div class="card trail-card">
-            <img src="{{ MEDIA_URL }}trail_images/{{ trail.id }}.png" class="card-img-top" alt="{{ trail.title }}">
+            <!-- Use the actual trail.image.url if it exists, else fallback to placeholder -->
+            {% if trail.image %}
+                <img src="{{ trail.image.url }}" class="card-img-top" alt="{{ trail.title }}">
+            {% else %}
+                <img src="https://placehold.co/400x280" class="card-img-top" alt="No image">
+            {% endif %}
             <div class="card-body">
                 <h5 class="card-title">{{ trail.title }}</h5>
                 <p><strong>Level:</strong> {{ trail.level }}</p>

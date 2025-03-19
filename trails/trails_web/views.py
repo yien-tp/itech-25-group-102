@@ -1,11 +1,11 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import JsonResponse
 from django.contrib.auth import update_session_auth_hash
-from .models import Category, Trail, UserProfile, Review, TrailLike
+from .models import Category, Trail, UserProfile, Review, TrailLike, ReviewLike
 from .forms import ReviewForm, UserProfileForm, TrailForm
 from django.contrib.auth.forms import PasswordChangeForm
-from django.db.models import Count
+from django.db.models import Count, Q
 
 
 def home(request):
@@ -35,18 +35,28 @@ def category_trails(request, category_slug):
     return render(request, 'trails_web/category_trails.html', {'category': category, 'trails': trails})
 
 def trail_detail(request, trail_id):
-    """Display trail details and user's like status."""
     trail = get_object_or_404(Trail, id=trail_id)
-    reviews = trail.reviews.all()
+    reviews_qs = trail.reviews.all().select_related('user')
 
-    # Check if the user has liked this trail
+    reviews = []
+    if request.user.is_authenticated:
+        user_profile = request.user.userprofile
+        for rv in reviews_qs:
+            has_liked = rv.liked_by.filter(user=user_profile).exists()
+            reviews.append((rv, has_liked))
+    else:
+        # If not logged in, no likes
+        for rv in reviews_qs:
+            reviews.append((rv, False))
+
+    # For the main trail "like" logic
     user_has_liked = False
     if request.user.is_authenticated:
-        user_has_liked = TrailLike.objects.filter(user=request.user.userprofile, trail=trail).exists()
+        user_has_liked = trail.liked_by.filter(user=request.user.userprofile).exists()
 
     return render(request, 'trails_web/trail_detail.html', {
         'trail': trail,
-        'reviews': reviews,
+        'reviews': reviews,  # now a list of tuples: (review, has_liked)
         'user_has_liked': user_has_liked
     })
 
@@ -102,7 +112,6 @@ def user_profile(request, username):
         'profile': profile,
         'cat_favs': cat_favs,
     })
-
 
 @login_required
 def update_profile(request, username):
@@ -180,7 +189,6 @@ def add_review(request, trail_id):
 
     return render(request, 'trails_web/add_review.html', {'form': form, 'trail': trail})
 
-
 @login_required
 def update_favorite_trail(request, username):
     if request.user.username != username:
@@ -204,18 +212,26 @@ def update_favorite_trail(request, username):
 
 @login_required
 def add_trail_to_category(request, category_slug):
-    # 1) Get the category or return 404 if not found
     category = get_object_or_404(Category, slug=category_slug)
 
     if request.method == 'POST':
-        form = TrailForm(request.POST)
+        form = TrailForm(request.POST, request.FILES)
         if form.is_valid():
-            # 2) Create a new trail but don’t commit yet
+            # 1) Create the trail WITHOUT the image
             new_trail = form.save(commit=False)
-            # 3) Assign the category from the URL
             new_trail.category = category
+            new_trail.created_by = request.user.userprofile
+            # Temporarily remove the image from the form
+            uploaded_image = request.FILES.get('image', None)
+            new_trail.image = None
+            # Save the trail -> now PK is assigned
             new_trail.save()
-            # 4) Redirect back to the category trails page
+
+            # 2) If user uploaded an image, reassign and save again
+            if uploaded_image:
+                new_trail.image = uploaded_image
+                new_trail.save()
+
             return redirect('trails_web:category_trails', category_slug=category.slug)
     else:
         form = TrailForm()
@@ -223,4 +239,72 @@ def add_trail_to_category(request, category_slug):
     return render(request, 'trails_web/add_trail.html', {
         'form': form,
         'category': category,
+    })
+
+@user_passes_test(lambda u: u.is_superuser)  # Only allow superusers
+def edit_trail(request, trail_id):
+    trail = get_object_or_404(Trail, id=trail_id)
+
+    if request.method == 'POST':
+        form = TrailForm(request.POST, request.FILES, instance=trail)
+        if form.is_valid():
+            form.save()
+            return redirect('trails_web:trail_detail', trail_id=trail.id)
+    else:
+        form = TrailForm(instance=trail)
+
+    return render(request, 'trails_web/edit_trail.html', {
+        'form': form,
+        'trail': trail,
+    })
+
+@login_required
+def like_review(request, review_id):
+    review = get_object_or_404(Review, id=review_id)
+    user_profile = request.user.userprofile
+
+    # Check if user already liked this review
+    liked_already = ReviewLike.objects.filter(user=user_profile, review=review).exists()
+
+    if liked_already:
+        # User has liked, so remove the like
+        review.likes -= 1
+        review.save()
+        ReviewLike.objects.filter(user=user_profile, review=review).delete()
+        return JsonResponse({
+            'liked': False,
+            'total_likes': review.likes
+        })
+    else:
+        # User hasn't liked, so add the like
+        review.likes += 1
+        review.save()
+        ReviewLike.objects.create(user=user_profile, review=review)
+        return JsonResponse({
+            'liked': True,
+            'total_likes': review.likes
+        })
+    
+def search(request):
+    query = request.GET.get('q', '').strip()
+    trail_results = []
+    category_results = []
+
+    if query:
+        # Filter trails
+        trail_results = Trail.objects.filter(
+            Q(title__icontains=query) |
+            Q(address__icontains=query) |
+            Q(level__icontains=query)
+        )
+
+        # Filter categories
+        category_results = Category.objects.filter(
+            name__icontains=query
+        )
+
+    return render(request, 'trails_web/search_results.html', {
+        'query': query,
+        'trail_results': trail_results,
+        'category_results': category_results,
     })

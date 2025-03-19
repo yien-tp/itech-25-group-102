@@ -17,7 +17,7 @@
     <div class="row justify-content-center mt-3">
         <div class="col-auto text-center">
             <!-- Simple search form (adjust as needed for real search) -->
-            <form method="get" action="#">
+            <form method="get" action="{% url 'trails_web:search' %}">
                 <input type="text" name="q" placeholder="Search..." class="form-control d-inline-block" style="width:200px;">
                 <button type="submit" class="btn btn-primary">Search</button>
             </form>

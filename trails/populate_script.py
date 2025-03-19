@@ -9,8 +9,8 @@ from trails_web.models import Category, Trail, UserProfile, Review, TrailLike
 from django.core.files.base import ContentFile
 from django.contrib.auth.models import User
 
-# Sample Data
-CATEGORY_NAMES = ['Mountain', 'Forest', 'Coastal', 'Urban', 'Loch Lomond'] 
+# Sample Datahttps://github.com/izackwu/TeachYourselfCS-CN/blob/master/TeachYourselfCS-CN.md
+CATEGORY_NAMES = ['Edinburgh City', 'Glasgow City', 'Loch Lomond'] 
 TRAILS_DATA = [
     {"name": "Conic Hill", "length": 4.2, "estimate_time": 2.5, "level": "Moderate", "elevation_gain": 323, "longitude": -4.53897, "latitude": 56.08501, "category": "Loch Lomond"},
     {"name": "Ben Lomond Mountain Path", "length": 12.4, "estimate_time": 5.32, "level": "Hard", "elevation_gain": 961, "longitude": -4.64176, "latitude": 56.15214, "category": "Loch Lomond"},
@@ -37,7 +37,17 @@ TRAILS_DATA = [
     {"name": "Ben More and Stob Binnein", "length": 10.5, "estimate_time": 6.4, "level": "Hard", "elevation_gain": 1260, "longitude": -4.57057, "latitude": 56.3987, "category": "Loch Lomond"},
     {"name": "Beinn Narnain Circular", "length": 10.3, "estimate_time": 5.0, "level": "Hard", "elevation_gain": 910, "longitude": -4.75034, "latitude": 56.20615, "category": "Loch Lomond"},
     {"name": "Puck's Glen Gorge Trail", "length": 2.6, "estimate_time": 1.0, "level": "Moderate", "elevation_gain": 132, "longitude": -4.9743, "latitude": 56.01217, "category": "Loch Lomond"},
-    {"name": "Ben Venue", "length": 14.3, "estimate_time": 5.0, "level": "Hard", "elevation_gain": 736, "longitude": -4.41198, "latitude": 56.23099, "category": "Loch Lomond"}
+    {"name": "Ben Venue", "length": 14.3, "estimate_time": 5.0, "level": "Hard", "elevation_gain": 736, "longitude": -4.41198, "latitude": 56.23099, "category": "Loch Lomond"},
+    {"name": "Glasgow Botanical Gardens", "length": 1.6, "estimate_time": 0.5, "level": "Easy", "elevation_gain": 30, "longitude": -4.28971, "latitude": 55.87806, "category": "Glasgow City"},
+    {"name": "Kelvin Walkway", "length": 9.2, "estimate_time": 2, "level": "Easy", "elevation_gain": 144, "longitude": -4.28067, "latitude": 55.87478, "category": "Glasgow City"},
+    {"name": "Partick Station to Balloch Station", "length": 29.8, "estimate_time": 6, "level": "Moderate", "elevation_gain": 258, "longitude": -4.30856, "latitude": 55.87001, "category": "Glasgow City"},
+    {"name": "Clyde Walkway: Glasgow to Cambuslang Bridge", "length": 14.8, "estimate_time": 3.2, "level": "Moderate", "elevation_gain": 120, "longitude": -4.30547, "latitude": 55.86573, "category": "Glasgow City"},
+    {"name": "Hamiltonhill Claypits Local Nature Reserve Circular", "length": 3.9, "estimate_time": 1, "level": "Easy", "elevation_gain": 81, "longitude": -4.26806, "latitude": 55.88249, "category": "Glasgow City"},
+    {"name": "Queen's Drive around Holyrood Park", "length": 5.3, "estimate_time": 0.25, "level": "Easy", "elevation_gain": 150, "longitude": -3.1698, "latitude": 55.95112, "category": "Edinburgh City"},
+    {"name": "John Muir Way: Edinburgh to Prestonpans", "length": 12.6, "estimate_time": 2.5, "level": "Easy", "elevation_gain": 84, "longitude": -3.17209, "latitude": 55.94131, "category": "Edinburgh City"},
+    {"name": "Corstorphine Hill Circular","length": 4.3,"estimate_time": 1,"level": "Easy","elevation_gain": 131,"longitude": -3.27931,"latitude": 55.95831, "category": "Edinburgh City"},
+    {"name": "Edinburgh Marina and Threipmuir Reservoir","length": 39.4,"estimate_time": 9.5,"level": "Moderate","elevation_gain": 759,"longitude": -3.2226,"latitude": 55.98351, "category": "Edinburgh City"},
+    {"name": "Royal Botanic Garden Edinburgh","length": 2.7,"estimate_time": 0.5,"level": "Easy","elevation_gain": 44,"longitude": -3.21254,"latitude": 55.96448, "category": "Edinburgh City"}
 ]
 
 USERNAMES = ['alice', 'bob', 'charlie']
@@ -56,12 +66,21 @@ def populate():
         category, created = Category.objects.get_or_create(name=name, slug=name.lower().replace(" ", "-"))
         categories.append(category)
     loch_lomond_category, created = Category.objects.get_or_create(name="Loch Lomond", slug="loch-lomond")
+    glasgow_city_category, created = Category.objects.get_or_create(name="Glasgow City", slug="glasgow-city")
+    edinburgh_city_category, created = Category.objects.get_or_create(name="Edinburgh City", slug="edinburgh-city")
+
+    
 
     print("Creating trails...")
     trails = []
     for trail_data in TRAILS_DATA:
-        category = random.choice(categories)
-        print(category)
+        if(trail_data["category"] == "Loch Lomond"):
+            category = loch_lomond_category
+        elif(trail_data["category"] == "Glasgow City"):
+            category = glasgow_city_category
+        else:
+            category = edinburgh_city_category
+        
         trail, created = Trail.objects.get_or_create(
             title=trail_data["name"],
             length=trail_data["length"],
@@ -70,7 +89,7 @@ def populate():
             elevation_gain=trail_data["elevation_gain"],
             longitude=trail_data["longitude"],
             latitude=trail_data["latitude"],
-            category=loch_lomond_category
+            category=category
         )
         trails.append(trail)
 

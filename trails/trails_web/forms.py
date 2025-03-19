@@ -90,7 +90,8 @@ class TrailForm(forms.ModelForm):
             'level',
             'elevation_gain',
             'latitude',
-            'longitude'
+            'longitude',
+            'image',
         ]
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control'}),

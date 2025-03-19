@@ -5,35 +5,39 @@
 {% block content %}
 <div class="container">
     <h2>Add a New Trail to {{ category.name }}</h2>
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">  <!-- Notice enctype here -->
         {% csrf_token %}
         <div class="mb-3">
             {{ form.title.label_tag }}<br>
-            {{ form.title }}  <!-- Title -->
+            {{ form.title }}
         </div>
         <div class="mb-3">
             {{ form.length.label_tag }} (km)<br>
-            {{ form.length }}  <!-- Length -->
+            {{ form.length }}
         </div>
         <div class="mb-3">
             {{ form.estimate_time.label_tag }} (hours)<br>
-            {{ form.estimate_time }}  <!-- Estimate time -->
+            {{ form.estimate_time }}
         </div>
         <div class="mb-3">
             {{ form.level.label_tag }}<br>
-            {{ form.level }}  <!-- Level dropdown -->
+            {{ form.level }}
         </div>
         <div class="mb-3">
             {{ form.elevation_gain.label_tag }} (m)<br>
-            {{ form.elevation_gain }}  <!-- Elevation gain -->
+            {{ form.elevation_gain }}
         </div>
         <div class="mb-3">
             {{ form.latitude.label_tag }}<br>
-            {{ form.latitude }}  <!-- Latitude -->
+            {{ form.latitude }}
         </div>
         <div class="mb-3">
             {{ form.longitude.label_tag }}<br>
-            {{ form.longitude }}  <!-- Longitude -->
+            {{ form.longitude }}
+        </div>
+        <div class="mb-3">
+            {{ form.image.label_tag }}<br>
+            {{ form.image }}  <!-- Image Field -->
         </div>
         <button type="submit" class="btn btn-primary">Create Trail</button>
     </form>
