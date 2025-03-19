@@ -40,6 +40,7 @@ jobs:
           ACCESS_KEY: ${{ secrets.ACCESS_KEY }}
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
           CONNECTION_STRING: ${{ secrets.CONNECTION_STRING }}
+          DEBUG: ${{ secrets.DEBUG }}
         run: |
           cd trails
           python manage.py test
