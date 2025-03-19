@@ -1,5 +1,7 @@
 from django.urls import path
 from .views import home, category_trails, trail_detail, add_review, like_trail, user_profile, update_profile, update_favorite_trail, category_list, add_trail_to_category, edit_trail, like_review, search
+
+
 app_name = "trails_web"
 
 urlpatterns = [
@@ -18,4 +20,5 @@ urlpatterns = [
     path('trail/<int:trail_id>/like/', like_trail, name='like_trail'),
     path('trail/<int:trail_id>/add_review/', add_review, name='add_review'),
     path('review/<int:review_id>/like/', like_review, name='like_review'),
+    
 ]
